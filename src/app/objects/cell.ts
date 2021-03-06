@@ -4,7 +4,7 @@ export class Cell {
   x: number;
   y: number;
   value: number;
-  state?: CellStateEnum = CellStateEnum.closed;
+  state?: CellStateEnum = CellStateEnum.closed
   constructor(cell?: Cell) {
     if (!cell) { return; }
     this.x = cell.x;

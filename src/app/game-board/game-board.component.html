@@ -1,0 +1,37 @@
+<div class="position-relative">
+  <div *ngIf="(status$ | async) === gameStatusEnum.init" class="loader-init"></div>
+  <table class="table table-bordered">
+    <tbody>
+    <tr *ngFor="let row of (board$ | async); trackBy: trackByRow">
+      <td *ngFor="let cell of row; trackBy: trackByCell"
+          (click)="onCellClick(cell)">
+        <div *ngIf="cell.state === cellStateEnum.open"
+             [ngSwitch]="cell.value">
+          <div *ngSwitchCase="cellTypeEnum.mine">
+            <span class="animate-flicker"><i class="fas fa-bug text-danger"></i></span>
+          </div>
+          <div *ngSwitchCase="cellTypeEnum.flag">
+            <span><i class="fas fa-flag"></i></span>
+          </div>
+          <div *ngSwitchDefault>
+            <span class="item-{{cell.value}}">{{cell.value}}</span>
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+
+  </table>
+</div>
+
+
+
+<div class="btn-options">
+  <button class="btn btn-primary" (click)="onChangeStatusClick()">
+    <div [ngSwitch]="status$ | async">
+      <div *ngSwitchCase="gameStatusEnum.init">Start the game</div>
+      <div *ngSwitchCase="gameStatusEnum.failed">Play again</div>
+      <div *ngSwitchCase="gameStatusEnum.running">Restart</div>
+    </div>
+  </button>
+</div>

@@ -2,6 +2,17 @@
   flex: 1;
 }
 
+.github {
+  margin: 0 16px;
+  font-size: 2rem;
+  color: white;
+  &:hover {
+    cursor: pointer;
+    i {
+      color: #e5e5e5;
+    }
+  }
+}
 .toolbar {
   position: absolute;
   top: 0;
@@ -19,14 +30,6 @@
   margin: 0 16px;
 }
 
-.toolbar #twitter-logo {
-  height: 40px;
-  margin: 0 16px;
-}
-
-.toolbar #twitter-logo:hover {
-  opacity: 0.8;
-}
 
 .content {
   display: flex;

@@ -4,13 +4,27 @@ import {AROUND_CELL_OPERATORS, randomNumber} from '../utils/utils';
 import {CellTypeEnum} from '../enums/cell-type.enum';
 import {Cell} from '../objects/cell';
 import {CellStateEnum} from '../enums/cell-state.enum';
+import {GameStatusEnum} from '../enums/game-status.enum';
 
 @Injectable()
 export class GameBoardService {
   private board: BehaviorSubject<Cell[][]> = new BehaviorSubject<Cell[][]>([]);
+  private status: BehaviorSubject<GameStatusEnum> = new BehaviorSubject<GameStatusEnum>(GameStatusEnum.init);
   private minesPosition: Cell[] = [];
-
+  private isFirstTime = true;
   constructor() {
+  }
+
+
+  loadFirstTimeBoard(): void {
+    this.generateEmptyBoard();
+    this.status.next(GameStatusEnum.init);
+  }
+  gameStatusChanged(): void {
+    this.generateEmptyBoard();
+    this.generateMinesPosition();
+    this.generateNumbers();
+    this.status.next(GameStatusEnum.running);
   }
 
   generateEmptyBoard(boardSize: number = 9): void {
@@ -26,6 +40,7 @@ export class GameBoardService {
 
   generateMinesPosition(): void {
     const board: Cell[][] = this.board.value;
+    this.minesPosition = [];
     let mines = 0;
     while (mines < 10) {
       const randomX: number = randomNumber(0, 9);
@@ -56,7 +71,12 @@ export class GameBoardService {
   }
 
   cellClicked(cell: Cell): void {
-    const boardValue: Cell[][] = this.board.value.slice();
+    const gameStatus: GameStatusEnum = this.status.value;
+    if (gameStatus !== GameStatusEnum.running) {
+      return;
+    }
+
+    const boardValue: Cell[][] = this.board.value;
     const boardCell: Cell = boardValue[cell.x][cell.y];
 
     // Check if cell in close mode
@@ -68,6 +88,7 @@ export class GameBoardService {
       this.minesPosition.forEach((mine: Cell) => {
         boardValue[mine.x][mine.y].state = CellStateEnum.open;
       });
+      this.status.next(GameStatusEnum.failed);
       return;
     }
 
@@ -98,6 +119,11 @@ export class GameBoardService {
         }
       }
     });
+  }
+
+
+  get gameStatus(): Observable<GameStatusEnum> {
+    return this.status.asObservable();
   }
 
   get gameBoard(): Observable<Cell[][]> {

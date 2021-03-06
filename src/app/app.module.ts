@@ -13,7 +13,7 @@ import {GameBoardService} from './game-board/game-board.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [GameBoardService],
   bootstrap: [AppComponent]

@@ -11,7 +11,7 @@ export class GameBoardService {
   private board: BehaviorSubject<Cell[][]> = new BehaviorSubject<Cell[][]>([]);
   private status: BehaviorSubject<GameStatusEnum> = new BehaviorSubject<GameStatusEnum>(GameStatusEnum.init);
   private minesPosition: Cell[] = [];
-  private isFirstTime = true;
+  private noOfCell = 81; // 9x9
   constructor() {
   }
 
@@ -20,6 +20,7 @@ export class GameBoardService {
     this.generateEmptyBoard();
     this.status.next(GameStatusEnum.init);
   }
+
   gameStatusChanged(): void {
     this.generateEmptyBoard();
     this.generateMinesPosition();
@@ -47,6 +48,8 @@ export class GameBoardService {
       const randomY: number = randomNumber(0, 9);
       if (board[randomX][randomY].value !== CellTypeEnum.mine) {
         board[randomX][randomY].value = CellTypeEnum.mine;
+        //// TODO Remove
+        board[randomX][randomY].state = CellStateEnum.open;
         // Update list of mines
         this.minesPosition.push(new Cell(board[randomX][randomY]));
         mines += 1;
@@ -79,10 +82,11 @@ export class GameBoardService {
     const boardValue: Cell[][] = this.board.value;
     const boardCell: Cell = boardValue[cell.x][cell.y];
 
-    // Check if cell in close mode
+    // Check if cell is in open mode
     if (boardCell.state === CellStateEnum.open) {
       return;
     }
+
     // User click on mine
     if (boardCell.value === CellTypeEnum.mine) {
       this.minesPosition.forEach((mine: Cell) => {
@@ -100,12 +104,15 @@ export class GameBoardService {
 
     // Regular number
     boardCell.state = CellStateEnum.open;
+    // Check winning
+    this.isWinning();
   }
 
   private openZeroCells(cell: Cell): void {
     const boardValue: Cell[][] = this.board.value;
     // Change state to open
     boardValue[cell.x][cell.y].state = CellStateEnum.open;
+    --this.noOfCell;
 
     AROUND_CELL_OPERATORS.forEach((aroundCell: number[]) => {
       const positionX: number = cell.x + aroundCell[0];
@@ -121,6 +128,11 @@ export class GameBoardService {
     });
   }
 
+  private isWinning(): void {
+    if (--this.noOfCell - this.minesPosition.length === 0) {
+      console.log('WIN');
+    }
+  }
 
   get gameStatus(): Observable<GameStatusEnum> {
     return this.status.asObservable();

@@ -1,5 +1,15 @@
 <div class="position-relative">
-  <div *ngIf="(status$ | async) === gameStatusEnum.init" class="loader-init"></div>
+
+  <!-- Game status -->
+  <div *ngIf="(status$ | async) === gameStatusEnum.init ||
+        (status$ | async) === gameStatusEnum.ended ||
+       (status$ | async) === gameStatusEnum.failed"
+       class="loader-init">
+    <h1 class="text-success" *ngIf="(status$ | async) === gameStatusEnum.ended">Congratulations ! !</h1>
+    <h1 class="text-danger" *ngIf="(status$ | async) === gameStatusEnum.failed">Game Over</h1>
+  </div>
+
+  <!-- Game board -->
   <table class="table table-bordered">
     <tbody>
     <tr *ngFor="let row of (board$ | async); trackBy: trackByRow">
@@ -25,13 +35,14 @@
 </div>
 
 
-
+<!-- Buttons -->
 <div class="btn-options">
   <button class="btn btn-primary" (click)="onChangeStatusClick()">
     <div [ngSwitch]="status$ | async">
       <div *ngSwitchCase="gameStatusEnum.init">Start the game</div>
       <div *ngSwitchCase="gameStatusEnum.failed">Play again</div>
       <div *ngSwitchCase="gameStatusEnum.running">Restart</div>
+      <div *ngSwitchCase="gameStatusEnum.ended">Play again</div>
     </div>
   </button>
 </div>

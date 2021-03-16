@@ -48,8 +48,6 @@ export class GameBoardService {
       const randomY: number = randomNumber(0, 9);
       if (board[randomX][randomY].value !== CellTypeEnum.mine) {
         board[randomX][randomY].value = CellTypeEnum.mine;
-        //// TODO Remove
-        board[randomX][randomY].state = CellStateEnum.open;
         // Update list of mines
         this.minesPosition.push(new Cell(board[randomX][randomY]));
         mines += 1;
@@ -105,7 +103,7 @@ export class GameBoardService {
     // Regular number
     boardCell.state = CellStateEnum.open;
     // Check winning
-    this.isWinning();
+    this.checkWinning();
   }
 
   private openZeroCells(cell: Cell): void {
@@ -128,9 +126,13 @@ export class GameBoardService {
     });
   }
 
-  private isWinning(): void {
+  private checkWinning(): void {
     if (--this.noOfCell - this.minesPosition.length === 0) {
-      console.log('WIN');
+      const board: Cell[][] = this.board.value;
+      this.minesPosition.forEach((mine: Cell) => {
+        board[mine.x][mine.y].value = CellTypeEnum.flag;
+      });
+      this.status.next(GameStatusEnum.ended);
     }
   }
 

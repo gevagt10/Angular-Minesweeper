@@ -43,5 +43,6 @@ export class GameBoardComponent implements OnInit {
   onChangeStatusClick(): void {
     this.gameBoardService.gameStatusChanged();
   }
+
 }
 

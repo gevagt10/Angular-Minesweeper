@@ -1,6 +1,7 @@
 # Minesweeper
 
-Easy and fun Minesweeper game Angular based
+This repository contains source code for a 
+simple Minesweeper game app for Angular
 
 <p align="center">
 <img src="/src/assets/win.JPG" width="858" height="725">
